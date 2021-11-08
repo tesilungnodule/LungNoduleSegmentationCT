@@ -1,20 +1,21 @@
+from numpy import subtract
 import torch
 import os
 import torchio
-from torchio import Image, SubjectsDataset
+from torchio import Image, SubjectsDataset, Queue, UniformSampler
 
 
 class SemSegConfig():
     train_images = None
     train_labels = None
-    val_images   = None
-    val_labels   = None
+    val_images = None
+    val_labels = None
     do_normalize = True
     augmentation = None
-    zero_pad     = True
-    pad_ref      = (64,64,64)
-    batch_size   = 4
-    num_workers  = 0
+    zero_pad = True
+    pad_ref = (64, 64, 64)
+    batch_size = 4
+    num_workers = 0
 
 
 def TorchIODataLoader3DTraining(config: SemSegConfig) -> torch.utils.data.DataLoader:
@@ -30,7 +31,22 @@ def TorchIODataLoader3DTraining(config: SemSegConfig) -> torch.utils.data.DataLo
 
     # Deprecated
     # subjects_dataset = ImagesDataset(subject_list, transform=config.transform_train)
-    subjects_dataset = SubjectsDataset(subject_list, transform=config.transform_train)
+    subjects_dataset = SubjectsDataset(
+        subject_list, transform=config.transform_train)
+
+    patch_size = (48, 64, 48)
+    queue_length = 300
+    samples_per_volume = 10
+    sampler = UniformSampler(patch_size)
+    patches_queue = Queue(
+        subjects_dataset,
+        queue_length,
+        samples_per_volume,
+        sampler,
+        num_workers=4,
+    )
+    subjects_dataset = patches_queue
+
     train_data = torch.utils.data.DataLoader(subjects_dataset, batch_size=config.batch_size,
                                              shuffle=True, num_workers=config.num_workers)
     print('TorchIO Training Loader built!')
@@ -50,7 +66,8 @@ def TorchIODataLoader3DValidation(config: SemSegConfig) -> torch.utils.data.Data
 
     # Deprecated
     # subjects_dataset = ImagesDataset(subject_list, transform=config.transform_val)
-    subjects_dataset = SubjectsDataset(subject_list, transform=config.transform_val)
+    subjects_dataset = SubjectsDataset(
+        subject_list, transform=config.transform_val)
     val_data = torch.utils.data.DataLoader(subjects_dataset, batch_size=config.batch_size,
                                            shuffle=False, num_workers=config.num_workers)
     print('TorchIO Validation Loader built!')
@@ -69,7 +86,8 @@ def get_pad_3d_image(pad_ref: tuple = (64, 64, 64), zero_pad: bool = True):
             image_padded = torch.zeros(pad_ref_channels)
         else:
             image_padded = value_to_pad * torch.ones(pad_ref_channels)
-        image_padded[:,:image.shape[1],:image.shape[2],:image.shape[3]] = image
+        image_padded[:, :image.shape[1],
+                     :image.shape[2], :image.shape[3]] = image
         # print("image_padded.shape = {}".format(image_padded.shape))
         return image_padded
     return pad_3d_image
