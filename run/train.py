@@ -56,7 +56,7 @@ def run(config):
     ##########################
     # Check Torch DataLoader and Net
     ##########################
-    check_torch_loader(config, check_net=False)
+    #check_torch_loader(config, check_net=False)
 
     ##########################
     # Training loop
