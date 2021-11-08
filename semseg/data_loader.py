@@ -1,7 +1,7 @@
 import torch
 import os
 import torchio
-from torchio import Image, ImagesDataset, SubjectsDataset
+from torchio import Image, SubjectsDataset
 
 
 class SemSegConfig():
