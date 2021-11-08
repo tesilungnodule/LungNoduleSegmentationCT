@@ -43,7 +43,7 @@ def TorchIODataLoader3DTraining(config: SemSegConfig) -> torch.utils.data.DataLo
         queue_length,
         samples_per_volume,
         sampler,
-        num_workers=4,
+        num_workers=0,
     )
     subjects_dataset = patches_queue
 
