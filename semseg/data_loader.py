@@ -43,7 +43,7 @@ def TorchIODataLoader3DTraining(config: SemSegConfig) -> torch.utils.data.DataLo
         queue_length,
         samples_per_volume,
         sampler,
-        num_workers=0,
+        num_workers=4,
     )
     subjects_dataset = patches_queue
 
@@ -86,8 +86,7 @@ def get_pad_3d_image(pad_ref: tuple = (64, 64, 64), zero_pad: bool = True):
             image_padded = torch.zeros(pad_ref_channels)
         else:
             image_padded = value_to_pad * torch.ones(pad_ref_channels)
-        image_padded[:, :image.shape[1],
-                     :image.shape[2], :image.shape[3]] = image
+        image_padded[:, :image.shape[1],:image.shape[2], :image.shape[3]] = image
         # print("image_padded.shape = {}".format(image_padded.shape))
         return image_padded
     return pad_3d_image
