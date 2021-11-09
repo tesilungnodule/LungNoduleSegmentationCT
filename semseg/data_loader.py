@@ -31,8 +31,9 @@ def TorchIODataLoader3DTraining(config: SemSegConfig) -> torch.utils.data.DataLo
 
     # Deprecated
     # subjects_dataset = ImagesDataset(subject_list, transform=config.transform_train)
-    subjects_dataset = SubjectsDataset(
-        subject_list, transform=config.transform_train)
+    #getting error
+    #subjects_dataset = SubjectsDataset(subject_list, transform=config.transform_train)
+    subjects_dataset = SubjectsDataset(subject_list)
 
     patch_size = (48, 64, 48)
     queue_length = 300
@@ -66,8 +67,9 @@ def TorchIODataLoader3DValidation(config: SemSegConfig) -> torch.utils.data.Data
 
     # Deprecated
     # subjects_dataset = ImagesDataset(subject_list, transform=config.transform_val)
-    subjects_dataset = SubjectsDataset(
-        subject_list, transform=config.transform_val)
+    #subjects_dataset = SubjectsDataset(subject_list, transform=config.transform_val)
+    subjects_dataset = SubjectsDataset(subject_list)
+
     val_data = torch.utils.data.DataLoader(subjects_dataset, batch_size=config.batch_size,
                                            shuffle=False, num_workers=config.num_workers)
     print('TorchIO Validation Loader built!')
