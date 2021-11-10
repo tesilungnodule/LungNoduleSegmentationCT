@@ -32,8 +32,8 @@ def TorchIODataLoader3DTraining(config: SemSegConfig) -> torch.utils.data.DataLo
     # Deprecated
     # subjects_dataset = ImagesDataset(subject_list, transform=config.transform_train)
     #getting error
-    #subjects_dataset = SubjectsDataset(subject_list, transform=config.transform_train)
-    subjects_dataset = SubjectsDataset(subject_list)
+    subjects_dataset = SubjectsDataset(subject_list, transform=config.transform_train)
+    #subjects_dataset = SubjectsDataset(subject_list)
 
     patch_size = (48, 64, 48)
     queue_length = 300
